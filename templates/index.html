@@ -1,0 +1,1041 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<!-- ============================================================== -->
+<!-- 1. DASHBOARD OVERVIEW TAB -->
+<!-- ============================================================== -->
+<div class="tab-pane active" id="tab-dashboard">
+  <div class="cinema-banner">
+    <i class="fa-solid fa-tower-broadcast"></i>
+    <div>
+      <strong>DCI Theater Management System (TMS) Telemetry:</strong> Real-time operational monitoring of cinema auditoriums. Weekly KDM license issuance and DCP MXF package essence validation are tracked continuously.
+    </div>
+  </div>
+
+  <!-- KPI Cards Grid -->
+  <div class="kpi-grid">
+    <div class="kpi-card">
+      <div class="kpi-header">
+        <span class="kpi-title">Total Screens</span>
+        <div class="kpi-icon"><i class="fa-solid fa-display"></i></div>
+      </div>
+      <div class="kpi-value" id="kpi-total-screens">--</div>
+      <div class="kpi-subtext">Active DCI Auditoriums</div>
+    </div>
+
+    <div class="kpi-card">
+      <div class="kpi-header">
+        <span class="kpi-title">DCP Deliveries</span>
+        <div class="kpi-icon"><i class="fa-solid fa-box-archive"></i></div>
+      </div>
+      <div class="kpi-value" id="kpi-total-deliveries">--</div>
+      <div class="kpi-subtext">Total Monitored Ingests</div>
+    </div>
+
+    <div class="kpi-card gold-card">
+      <div class="kpi-header">
+        <span class="kpi-title">KDM Availability</span>
+        <div class="kpi-icon"><i class="fa-solid fa-key"></i></div>
+      </div>
+      <div class="kpi-value" id="kpi-kdm-avail">--%</div>
+      <div class="kpi-subtext">License Key Readiness</div>
+    </div>
+
+    <div class="kpi-card red-card">
+      <div class="kpi-header">
+        <span class="kpi-title">DCP Corruptions</span>
+        <div class="kpi-icon"><i class="fa-solid fa-triangle-exclamation"></i></div>
+      </div>
+      <div class="kpi-value" id="kpi-dcp-corrupt">--</div>
+      <div class="kpi-subtext">Packet Loss &gt; 2%</div>
+    </div>
+
+    <div class="kpi-card purple-card">
+      <div class="kpi-header">
+        <span class="kpi-title">Firmware Alerts</span>
+        <div class="kpi-icon"><i class="fa-solid fa-microchip"></i></div>
+      </div>
+      <div class="kpi-value" id="kpi-firmware-alerts">--</div>
+      <div class="kpi-subtext">Security Block Updates</div>
+    </div>
+
+    <div class="kpi-card">
+      <div class="kpi-header">
+        <span class="kpi-title">Sound Sync Errors</span>
+        <div class="kpi-icon"><i class="fa-solid fa-sliders"></i></div>
+      </div>
+      <div class="kpi-value" id="kpi-sound-sync">--</div>
+      <div class="kpi-subtext">Offset &gt; &plusmn;20ms SMPTE</div>
+    </div>
+
+    <div class="kpi-card red-card">
+      <div class="kpi-header">
+        <span class="kpi-title">Critical Incidents</span>
+        <div class="kpi-icon"><i class="fa-solid fa-fire"></i></div>
+      </div>
+      <div class="kpi-value" id="kpi-critical-incidents">--</div>
+      <div class="kpi-subtext">Showtime Threat Flags</div>
+    </div>
+
+    <div class="kpi-card gold-card">
+      <div class="kpi-header">
+        <span class="kpi-title">Avg Recovery Time</span>
+        <div class="kpi-icon"><i class="fa-solid fa-stopwatch"></i></div>
+      </div>
+      <div class="kpi-value" id="kpi-avg-recovery">-- min</div>
+      <div class="kpi-subtext">Mean Incident Resolution</div>
+    </div>
+  </div>
+
+  <!-- Charts Grid 1: Weekly Trends & Risk Donut -->
+  <div class="charts-grid-3">
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">
+          <i class="fa-solid fa-chart-line"></i>
+          <span>Weekly KDM Availability vs. Payment Compliance</span>
+        </div>
+        <span class="card-badge">Weekly Trends</span>
+      </div>
+      <div id="chart-kdm-payment-trend" class="chart-wrapper"></div>
+      <div class="research-explanation">
+        <strong>Research Interpretation:</strong> Correlates the provider financial settlement workflow with cryptographic KDM issuance. Demonstrates the operational dependency where pending distributor payments induce delayed key delivery.
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">
+          <i class="fa-solid fa-chart-pie"></i>
+          <span>Cinema Delivery Risk Distribution</span>
+        </div>
+        <span class="card-badge">Operational Status</span>
+      </div>
+      <div id="chart-risk-donut" class="chart-wrapper"></div>
+      <div class="research-explanation">
+        <strong>Research Interpretation:</strong> Categorical breakdown of all auditorium ingests into NORMAL, WARNING, and CRITICAL operating states based on multi-sensor delivery indicators.
+      </div>
+    </div>
+  </div>
+
+  <!-- Charts Grid 2: DCP Corruption Trends & Monthly Performance -->
+  <div class="charts-grid-2">
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">
+          <i class="fa-solid fa-wave-square"></i>
+          <span>DCP Corruption &amp; Recovery Time Trends</span>
+        </div>
+        <span class="card-badge">Transport Quality</span>
+      </div>
+      <div id="chart-dcp-corruption-trend" class="chart-wrapper"></div>
+      <div class="research-explanation">
+        <strong>Research Interpretation:</strong> Visualizes the direct mathematical relationship between packet-level DCP essence corruption and the resulting recovery duration in minutes.
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">
+          <i class="fa-solid fa-chart-column"></i>
+          <span>Monthly Delivery Performance (Projection)</span>
+        </div>
+        <span class="card-badge">4-Week Batches</span>
+      </div>
+      <div id="chart-monthly-perf" class="chart-wrapper"></div>
+      <div class="research-explanation">
+        <strong>Research Interpretation:</strong> Aggregated multi-week reliability progression showing how proactive mitigations decrease CRITICAL delivery risks across operating periods.
+      </div>
+    </div>
+  </div>
+
+  <!-- Weekly KDM Monitoring Table (Section 4 Requirement) -->
+  <div class="card">
+    <div class="card-header">
+      <div class="card-title">
+        <i class="fa-solid fa-table-list"></i>
+        <span>Recent Cinema Delivery Activity &amp; KDM Monitoring Table</span>
+      </div>
+      <div style="display: flex; gap: 10px;">
+        <input type="text" id="kdm-table-search" placeholder="Search Screen ID (e.g. SCR-01)..." class="form-control" style="width: 240px; padding: 5px 12px; font-size: 0.78rem;">
+      </div>
+    </div>
+
+    <div class="table-responsive" style="max-height: 420px; overflow-y: auto;">
+      <table class="table-custom">
+        <thead>
+          <tr>
+            <th>Week</th>
+            <th>Screen ID</th>
+            <th>Payment Status</th>
+            <th>KDM Status</th>
+            <th>DCP Status</th>
+            <th>Firmware Status</th>
+            <th>Sound Sync</th>
+            <th>Delivery Risk</th>
+            <th>Recovery Est.</th>
+          </tr>
+        </thead>
+        <tbody id="kdm-table-body">
+          <tr><td colspan="9" style="text-align: center; color: #64748b;">Loading operational KDM telemetry...</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================== -->
+<!-- 2. CLASSIFICATION MODULE TAB -->
+<!-- ============================================================== -->
+<div class="tab-pane" id="tab-classification">
+  <div class="card" style="margin-bottom: 24px; border-left: 4px solid var(--accent-gold);">
+    <h3 style="color: var(--accent-gold); font-size: 1.05rem; margin-bottom: 8px;">
+      <i class="fa-solid fa-book-bookmark"></i> Cinema Delivery Risk Classification &bull; Business Rule Alert
+    </h3>
+    <p style="font-size: 0.84rem; color: #cbd5e1; line-height: 1.6;">
+      <strong>Critical KDM Rule:</strong> If distributor licensing payment is pending, the KDM may not be issued according to the cinema's provider workflow. This prevents DCP decryption and risks showtime cancellations.
+    </p>
+  </div>
+
+  <div class="charts-grid-2">
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">
+          <i class="fa-solid fa-trophy"></i>
+          <span>Model Benchmark Comparison (Logistic, Tree, RF, SVM)</span>
+        </div>
+        <span class="card-badge" id="classification-best-badge">Best Model</span>
+      </div>
+
+      <div class="table-responsive">
+        <table class="table-custom">
+          <thead>
+            <tr>
+              <th>Model Algorithm</th>
+              <th>Accuracy</th>
+              <th>Precision</th>
+              <th>Recall</th>
+              <th>F1-Score</th>
+            </tr>
+          </thead>
+          <tbody id="classification-metrics-table">
+            <tr><td colspan="5" style="text-align: center;">Calculating model metrics...</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div style="margin-top: 20px;">
+        <h4 style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 10px;">Classification Feature Importance (Random Forest)</h4>
+        <div id="chart-cls-feature-importance" style="height: 220px;"></div>
+      </div>
+      <div class="research-explanation">
+        <strong>Research Interpretation:</strong> Compares accuracy, precision, recall, and F1-score across 4 fundamental classifiers. Feature importance shows KDM availability and decryptability are the dominant predictors of showtime viability.
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">
+          <i class="fa-solid fa-border-all"></i>
+          <span>Confusion Matrix Heatmap</span>
+        </div>
+        <span class="card-badge" id="cls-cm-model-name">Random Forest</span>
+      </div>
+      <div id="chart-confusion-matrix" class="chart-wrapper"></div>
+      <div class="research-explanation">
+        <strong>Research Interpretation:</strong> Evaluates misclassification rates across NORMAL, WARNING, and CRITICAL ground truths. Low false negatives for CRITICAL deliveries ensure cinema technicians are alerted before showtime.
+      </div>
+    </div>
+  </div>
+
+  <!-- Interactive Risk Category Prediction Form -->
+  <div class="card">
+    <div class="card-header">
+      <div class="card-title">
+        <i class="fa-solid fa-terminal"></i>
+        <span>Interactive Cinema Delivery Risk Predictor</span>
+      </div>
+      <span class="card-badge">Manual Input Inference</span>
+    </div>
+
+    <form id="form-classify-predict">
+      <div class="form-grid">
+        <div class="form-group">
+          <label class="form-label">Cinema Screen ID</label>
+          <select id="cls-screen" class="form-control">
+            <option value="SCR-01">SCR-01 (Auditorium 1)</option>
+            <option value="SCR-02">SCR-02 (Auditorium 2)</option>
+            <option value="SCR-03">SCR-03 (IMAX Hall)</option>
+            <option value="SCR-04">SCR-04 (Dolby Cinema)</option>
+            <option value="SCR-05">SCR-05 (Auditorium 5)</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Weekly Payment Status</label>
+          <select id="cls-payment" class="form-control">
+            <option value="1">Payment Completed (Authorized)</option>
+            <option value="0">Payment Pending / Overdue</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">KDM Availability</label>
+          <select id="cls-kdm-avail" class="form-control">
+            <option value="1">Available on Server</option>
+            <option value="0">Missing / Not Issued</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">KDM Decryptability</label>
+          <select id="cls-kdm-dec" class="form-control">
+            <option value="1">Decryptable (Valid Cert Match)</option>
+            <option value="0">Decryption Failed / Certificate Mismatch</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">KDM Expiry Status</label>
+          <select id="cls-kdm-exp" class="form-control">
+            <option value="0">License Window Valid Active</option>
+            <option value="1">License Window Expired</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">DCP Corruption Percentage (%)</label>
+          <input type="number" id="cls-dcp-corr" class="form-control" value="0.5" step="0.1" min="0" max="100">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Network Delay (ms)</label>
+          <input type="number" id="cls-network-delay" class="form-control" value="45.0" step="5" min="10" max="1000">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Classification Algorithm</label>
+          <select id="cls-model-select" class="form-control">
+            <option value="Random Forest">Random Forest Classifier</option>
+            <option value="Support Vector Machine">Support Vector Machine (SVM)</option>
+            <option value="Logistic Regression">Logistic Regression</option>
+            <option value="Decision Tree">Decision Tree Classifier</option>
+          </select>
+        </div>
+      </div>
+
+      <button type="submit" class="btn btn-cyan">
+        <i class="fa-solid fa-wand-magic-sparkles"></i>
+        <span>Run Risk Classification Inference</span>
+      </button>
+    </form>
+
+    <div id="cls-prediction-output" class="prediction-card">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+        <h4 style="font-size: 1rem; color: #fff;">Inference Output Result</h4>
+        <span id="cls-result-badge" class="badge" style="font-size: 0.9rem; padding: 6px 14px;">NORMAL</span>
+      </div>
+
+      <div style="margin-bottom: 14px;">
+        <div style="font-size: 0.78rem; color: var(--text-muted); margin-bottom: 4px;">Class Probability Distribution:</div>
+        <div id="cls-prob-bars" style="display: flex; flex-direction: column; gap: 6px;"></div>
+      </div>
+
+      <div>
+        <div style="font-size: 0.78rem; color: var(--text-muted); margin-bottom: 4px;">Diagnostic Findings &amp; KDM Business Rules:</div>
+        <ul id="cls-reasons-list" style="font-size: 0.82rem; color: #cbd5e1; padding-left: 20px;"></ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================== -->
+<!-- 3. ENSEMBLE LEARNING MODULE TAB (NEW SECTION 5) -->
+<!-- ============================================================== -->
+<div class="tab-pane" id="tab-ensemble">
+  <div class="cinema-banner">
+    <i class="fa-solid fa-layer-group"></i>
+    <div>
+      <strong>Ensemble Learning Architecture:</strong> Combines bagging, soft voting ensembles, and gradient boosting trees to achieve higher predictive stability and reduced generalization variance for digital cinema delivery.
+    </div>
+  </div>
+
+  <div class="charts-grid-2">
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">
+          <i class="fa-solid fa-table-list"></i>
+          <span>Ensemble Models Evaluation</span>
+        </div>
+        <span class="card-badge" id="ensemble-best-badge">Best Ensemble</span>
+      </div>
+
+      <div class="table-responsive">
+        <table class="table-custom">
+          <thead>
+            <tr>
+              <th>Ensemble Algorithm</th>
+              <th>Accuracy</th>
+              <th>Precision</th>
+              <th>Recall</th>
+              <th>F1-Score</th>
+            </tr>
+          </thead>
+          <tbody id="ensemble-metrics-table">
+            <tr><td colspan="5" style="text-align: center;">Evaluating ensemble models...</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="research-explanation">
+        <strong>Research Interpretation:</strong> Evaluates Bagging (bootstrap aggregation) and Gradient Boosting against soft-voting ensembles. Gradient boosting iteratively minimizes pseudo-residuals of complex delivery failure modes.
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">
+          <i class="fa-solid fa-border-all"></i>
+          <span>Ensemble Confusion Matrix</span>
+        </div>
+        <span class="card-badge" id="ens-cm-model-name">Ensemble Matrix</span>
+      </div>
+      <div id="chart-ensemble-confusion-matrix" class="chart-wrapper"></div>
+      <div class="research-explanation">
+        <strong>Research Interpretation:</strong> Confusion matrix of the optimal ensemble method demonstrating high recall on CRITICAL ingest failures without overfitting.
+      </div>
+    </div>
+  </div>
+
+  <div class="charts-grid-2">
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">
+          <i class="fa-solid fa-chart-column"></i>
+          <span>Ensemble Accuracy &amp; F1-Score Comparison</span>
+        </div>
+        <span class="card-badge">Accuracy vs F1</span>
+      </div>
+      <div id="chart-ensemble-accuracy" class="chart-wrapper"></div>
+      <div class="research-explanation">
+        <strong>Research Interpretation:</strong> Side-by-side comparison of overall accuracy vs weighted F1-score across all 4 ensemble strategies.
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">
+          <i class="fa-solid fa-chart-bar"></i>
+          <span>Ensemble Precision vs. Recall</span>
+        </div>
+        <span class="card-badge">Tradeoff Analysis</span>
+      </div>
+      <div id="chart-ensemble-prec-rec" class="chart-wrapper"></div>
+      <div class="research-explanation">
+        <strong>Research Interpretation:</strong> Precision and recall balance. In digital cinema operations, high recall is prioritized to prevent missing genuine equipment and licensing failures.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================== -->
+<!-- 4. REGRESSION MODULE TAB -->
+<!-- ============================================================== -->
+<div class="tab-pane" id="tab-regression">
+  <div class="kpi-grid">
+    <div class="kpi-card purple-card">
+      <div class="kpi-header"><span class="kpi-title">Gradient Boosting R²</span></div>
+      <div class="kpi-value" id="reg-gb-r2">--</div>
+      <div class="kpi-subtext">Optimal Regressor</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-header"><span class="kpi-title">Mean Absolute Error</span></div>
+      <div class="kpi-value" id="reg-best-mae">-- min</div>
+      <div class="kpi-subtext">Average Deviation</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-header"><span class="kpi-title">Root Mean Squared Error</span></div>
+      <div class="kpi-value" id="reg-best-rmse">-- min</div>
+      <div class="kpi-subtext">Penalized Error</div>
+    </div>
+    <div class="kpi-card gold-card">
+      <div class="kpi-header"><span class="kpi-title">Variance Explained</span></div>
+      <div class="kpi-value" id="reg-best-var">--%</div>
+      <div class="kpi-subtext">Model Fit Quality</div>
+    </div>
+  </div>
+
+  <div class="charts-grid-2">
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">
+          <i class="fa-solid fa-list-check"></i>
+          <span>Regression Models Evaluation (Linear, RF, SVR, GB)</span>
+        </div>
+        <span class="card-badge" id="regression-best-badge">Best Model</span>
+      </div>
+
+      <div class="table-responsive">
+        <table class="table-custom">
+          <thead>
+            <tr>
+              <th>Model Algorithm</th>
+              <th>MAE (min)</th>
+              <th>RMSE (min)</th>
+              <th>R² Score</th>
+            </tr>
+          </thead>
+          <tbody id="regression-metrics-table">
+            <tr><td colspan="4" style="text-align: center;">Calculating regression metrics...</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div style="margin-top: 20px;">
+        <h4 style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 10px;">Regression Feature Impact</h4>
+        <div id="chart-reg-feature-importance" style="height: 220px;"></div>
+      </div>
+      <div class="research-explanation">
+        <strong>Research Interpretation:</strong> Compares MAE, RMSE, and R² scores. Non-linear tree regressors outperform linear models due to threshold effects in KDM reissue turnaround times.
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">
+          <i class="fa-solid fa-chart-line"></i>
+          <span>Actual vs. Predicted Recovery Time (Minutes)</span>
+        </div>
+        <span class="card-badge" id="reg-actual-pred-model">Holdout Test Set</span>
+      </div>
+      <div id="chart-actual-vs-predicted" class="chart-wrapper"></div>
+      <div class="research-explanation">
+        <strong>Research Interpretation:</strong> Scatter and line progression comparing actual incident resolution durations against model predictions on holdout test data.
+      </div>
+    </div>
+  </div>
+
+  <!-- Interactive Recovery Time Prediction Form -->
+  <div class="card">
+    <div class="card-header">
+      <div class="card-title">
+        <i class="fa-solid fa-calculator"></i>
+        <span>Cinema Delivery Recovery Time Calculator</span>
+      </div>
+      <span class="card-badge">Predictive Operational Resolution Time</span>
+    </div>
+
+    <form id="form-reg-predict">
+      <div class="form-grid">
+        <div class="form-group">
+          <label class="form-label">DCP Corruption Percentage (%)</label>
+          <input type="number" id="reg-dcp-corr" class="form-control" value="8.5" step="0.1" min="0" max="100">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Broken KDM Status</label>
+          <select id="reg-broken-kdm" class="form-control">
+            <option value="1">Broken KDM (Key cannot decrypt / missing)</option>
+            <option value="0">Intact / Decryptable KDM</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">KDM Decryption Failure</label>
+          <select id="reg-kdm-dec-fail" class="form-control">
+            <option value="1">Decryption Failure Flagged</option>
+            <option value="0">No Decryption Failure</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Firmware Update Required</label>
+          <select id="reg-firmware" class="form-control">
+            <option value="1">Firmware Upgrade Needed</option>
+            <option value="0">Firmware Up to Date</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Sound Sync Error (ms)</label>
+          <input type="number" id="reg-sound-sync" class="form-control" value="65.0" step="5" min="-500" max="500">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Network Latency (ms)</label>
+          <input type="number" id="reg-net-delay" class="form-control" value="120.0" step="5" min="10" max="1000">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">DCP File Size (GB)</label>
+          <input type="number" id="reg-file-size" class="form-control" value="160.0" step="10" min="40" max="400">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Regression Algorithm</label>
+          <select id="reg-model-select" class="form-control">
+            <option value="Gradient Boosting Regressor">Gradient Boosting Regressor</option>
+            <option value="Random Forest Regressor">Random Forest Regressor</option>
+            <option value="Support Vector Regression">Support Vector Regression (SVR)</option>
+            <option value="Linear Regression">Linear Regression</option>
+          </select>
+        </div>
+      </div>
+
+      <button type="submit" class="btn btn-gold">
+        <i class="fa-solid fa-clock"></i>
+        <span>Compute Estimated Recovery Time</span>
+      </button>
+    </form>
+
+    <div id="reg-prediction-output" class="prediction-card">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
+        <h4 style="font-size: 1.05rem; color: #fff;">Expected Resolution Duration</h4>
+        <div style="font-size: 1.6rem; font-weight: 800; color: var(--accent-gold);" id="reg-result-minutes">-- min</div>
+      </div>
+
+      <div style="margin-bottom: 14px;" id="reg-warnings-container"></div>
+
+      <div>
+        <div style="font-size: 0.78rem; color: var(--text-muted); margin-bottom: 6px;">Operational Problem Impact Breakdown:</div>
+        <div class="table-responsive">
+          <table class="table-custom">
+            <thead>
+              <tr>
+                <th>Delivery Problem Component</th>
+                <th>Estimated Time Contribution</th>
+                <th>Impact Level</th>
+              </tr>
+            </thead>
+            <tbody id="reg-breakdown-body"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================== -->
+<!-- 5. K-MEANS CLUSTERING MODULE TAB -->
+<!-- ============================================================== -->
+<div class="tab-pane" id="tab-clustering">
+  <div class="cinema-banner">
+    <i class="fa-solid fa-circle-nodes"></i>
+    <div>
+      <strong>Unsupervised Failure Pattern Detection:</strong> Multidimensional clustering of delivery anomalies into distinct failure signatures. Evaluated via Elbow inertia and Silhouette analysis.
+    </div>
+  </div>
+
+  <!-- Side-by-side Elbow & Silhouette Charts (Section 12) -->
+  <div class="charts-grid-2">
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">
+          <i class="fa-solid fa-chart-line"></i>
+          <span>GRAPH 1: Elbow Method (Inertia vs. K)</span>
+        </div>
+        <span class="card-badge" id="kmeans-k-badge">K = 4 Selected</span>
+      </div>
+      <div id="chart-elbow-curve" class="chart-wrapper"></div>
+      <div class="research-explanation">
+        <strong>Research Interpretation:</strong> Plots sum of squared errors (inertia) for K=2 to 10. The elbow point marks where adding more clusters yields diminishing returns in within-cluster compactness.
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">
+          <i class="fa-solid fa-chart-column"></i>
+          <span>GRAPH 2: Silhouette Score Analysis</span>
+        </div>
+        <span class="card-badge" id="kmeans-sil-badge">Peak Separation</span>
+      </div>
+      <div id="chart-silhouette-scores" class="chart-wrapper"></div>
+      <div class="research-explanation">
+        <strong>Research Interpretation:</strong> Measures cluster separation quality and cohesion. The peak silhouette value confirms the mathematical optimal cluster count without subjective guessing.
+      </div>
+    </div>
+  </div>
+
+  <!-- GRAPH 3: PCA 2D Scatter Visualization -->
+  <div class="card" style="margin-bottom: 24px;">
+    <div class="card-header">
+      <div class="card-title">
+        <i class="fa-solid fa-diagram-project"></i>
+        <span>GRAPH 3: K-Means Cluster 2D PCA Visualization</span>
+      </div>
+      <span class="card-badge" id="pca-var-badge">PC1 vs PC2</span>
+    </div>
+    <div id="chart-pca-clusters" style="width: 100%; height: 440px;"></div>
+    <div class="research-explanation">
+      <strong>Research Interpretation:</strong> Projects 8 operational features down to 2 principal components (PC1, PC2) with cluster legends, visualizing the geometrical boundaries between healthy and failed cinema delivery events.
+    </div>
+  </div>
+
+  <!-- GRAPH 4: Cluster Profile Comparison -->
+  <div class="card">
+    <div class="card-header">
+      <div class="card-title">
+        <i class="fa-solid fa-chart-radar"></i>
+        <span>GRAPH 4: Cluster Profile Comparison &amp; Empirical Interpretations</span>
+      </div>
+      <span class="card-badge">Centroid Feature Means</span>
+    </div>
+
+    <div id="cluster-profiles-container" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; margin-bottom: 20px;"></div>
+
+    <div id="chart-cluster-radar" class="chart-wrapper" style="height: 380px;"></div>
+    <div class="research-explanation">
+      <strong>Research Interpretation:</strong> Compares average DCP corruption, KDM failures, network delay, firmware updates, and sound sync errors per cluster. Labels are derived dynamically from centroid feature means.
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================== -->
+<!-- 6. HIDDEN MARKOV MODEL (HMM) TAB -->
+<!-- ============================================================== -->
+<div class="tab-pane" id="tab-hmm">
+  <div class="cinema-banner">
+    <i class="fa-solid fa-wave-square"></i>
+    <div>
+      <strong>Sequential Delivery State Prediction (hmmlearn):</strong> Models temporal degradation and recovery transitions across sequential weekly observations, strictly maintaining chronological separation between screens.
+    </div>
+  </div>
+
+  <!-- Performance Banner (Graph 5) -->
+  <div class="kpi-grid">
+    <div class="kpi-card">
+      <div class="kpi-header"><span class="kpi-title">Train Log-Likelihood</span></div>
+      <div class="kpi-value" id="hmm-train-ll">--</div>
+      <div class="kpi-subtext" id="hmm-train-obs">Training Sequences</div>
+    </div>
+    <div class="kpi-card gold-card">
+      <div class="kpi-header"><span class="kpi-title">Test Log-Likelihood</span></div>
+      <div class="kpi-value" id="hmm-test-ll">--</div>
+      <div class="kpi-subtext" id="hmm-test-obs">Separated Holdout Screens</div>
+    </div>
+    <div class="kpi-card purple-card">
+      <div class="kpi-header"><span class="kpi-title">Normalized Train LL</span></div>
+      <div class="kpi-value" id="hmm-train-norm">-- /obs</div>
+      <div class="kpi-subtext">Per-Observation Score</div>
+    </div>
+    <div class="kpi-card purple-card">
+      <div class="kpi-header"><span class="kpi-title">Normalized Test LL</span></div>
+      <div class="kpi-value" id="hmm-test-norm">-- /obs</div>
+      <div class="kpi-subtext">Generalization Quality</div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-bottom: 20px;">
+    <div class="card-header">
+      <div class="card-title">
+        <i class="fa-solid fa-chart-column"></i>
+        <span>GRAPH 1: Initial Hidden State Probability Distribution (&pi;)</span>
+      </div>
+      <span class="card-badge">Start Vector</span>
+    </div>
+    <div id="chart-hmm-initial-probs" class="chart-wrapper" style="min-height: 250px;"></div>
+    <div class="research-explanation">
+      <strong>Research Interpretation:</strong> Represents the prior probability &pi; of a cinema auditorium beginning a theatrical distribution window in Stable, Degraded, or Critical operating states.
+    </div>
+  </div>
+
+  <!-- Side-by-side Heatmaps: Transition Matrix & Emission Matrix (Section 12) -->
+  <div class="charts-grid-2">
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">
+          <i class="fa-solid fa-arrows-spin"></i>
+          <span>GRAPH 2: Transition Probability Matrix</span>
+        </div>
+        <span class="card-badge">State Dynamics (A Matrix)</span>
+      </div>
+      <div id="chart-hmm-transition-heatmap" class="chart-wrapper"></div>
+      <div class="research-explanation">
+        <strong>Research Interpretation:</strong> Heatmap of transition probabilities $P(S_{t+1}|S_t)$ between hidden states. Demonstrates the probability of degraded conditions escalating into critical delivery failure.
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">
+          <i class="fa-solid fa-table-cells"></i>
+          <span>GRAPH 3: Emission Probability Matrix</span>
+        </div>
+        <span class="card-badge">Observation Probabilities (B Matrix)</span>
+      </div>
+      <div id="chart-hmm-emission-heatmap" class="chart-wrapper"></div>
+      <div class="research-explanation">
+        <strong>Research Interpretation:</strong> Discrete emission heatmap showing $P(\text{Observation} | \text{State})$. Clearly highlights how KDM availability and DCP integrity correlate with hidden operational health.
+      </div>
+    </div>
+  </div>
+
+  <!-- GRAPH 4: Hidden State Timeline -->
+  <div class="card" style="margin-top: 20px;">
+    <div class="card-header">
+      <div class="card-title">
+        <i class="fa-solid fa-timeline"></i>
+        <span>GRAPH 4: Hidden State Timeline (Viterbi Decoded State Progression)</span>
+      </div>
+      <div style="display: flex; align-items: center; gap: 10px;">
+        <label style="font-size: 0.78rem; color: var(--text-muted);">Cinema Screen:</label>
+        <select id="hmm-timeline-screen-select" class="form-control" style="width: 140px; padding: 4px 10px; font-size: 0.8rem;"></select>
+      </div>
+    </div>
+    <div id="chart-hmm-timeline" class="chart-wrapper" style="height: 360px;"></div>
+    <div class="research-explanation">
+      <strong>Research Interpretation:</strong> Reconstructs the most likely sequence of hidden operational states across time steps for an individual cinema screen using the Viterbi dynamic programming algorithm.
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================== -->
+<!-- 7. RESEARCH RESULTS AND COMPARISON TAB -->
+<!-- ============================================================== -->
+<div class="tab-pane" id="tab-comparison">
+  <div class="cinema-banner">
+    <i class="fa-solid fa-scale-balanced"></i>
+    <div>
+      <strong>PBL Research Results &amp; Algorithmic Comparison:</strong> Side-by-side evaluation of classification, ensemble learning, regression, clustering, and sequential HMM architectures for academic project review.
+    </div>
+  </div>
+
+  <div class="charts-grid-2">
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">
+          <i class="fa-solid fa-chart-simple"></i>
+          <span>Classification Models: F1-Score &amp; Accuracy</span>
+        </div>
+        <span class="card-badge">Individual Classifiers</span>
+      </div>
+      <div id="chart-comp-classification" class="chart-wrapper"></div>
+      <div class="research-explanation">
+        <strong>Research Finding:</strong> Random Forest and SVM achieve superior F1 scores compared to Logistic Regression due to non-linear feature interactions in KDM decryptability.
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">
+          <i class="fa-solid fa-chart-column"></i>
+          <span>Regression Models: MAE &amp; RMSE Comparison</span>
+        </div>
+        <span class="card-badge">Resolution Prediction</span>
+      </div>
+      <div id="chart-comp-regression" class="chart-wrapper"></div>
+      <div class="research-explanation">
+        <strong>Research Finding:</strong> Gradient Boosting Regressor achieves lowest MAE by effectively modeling the sharp penalty step introduced when a missing KDM requires distributor reissue.
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header">
+      <div class="card-title">
+        <i class="fa-solid fa-table"></i>
+        <span>Comprehensive Algorithm Benchmark Matrix</span>
+      </div>
+      <span class="card-badge">Computed Ground Truth</span>
+    </div>
+
+    <div class="table-responsive">
+      <table class="table-custom">
+        <thead>
+          <tr>
+            <th>Module Task</th>
+            <th>Algorithm Name</th>
+            <th>Primary Metric</th>
+            <th>Secondary Metric</th>
+            <th>Fit / Separation Quality</th>
+            <th>Selected Status</th>
+          </tr>
+        </thead>
+        <tbody id="comparison-matrix-body">
+          <tr><td colspan="6" style="text-align: center;">Aggregating benchmarks...</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================== -->
+<!-- 8. PREDICTIVE OPTIMIZATION TAB -->
+<!-- ============================================================== -->
+<div class="tab-pane" id="tab-optimizer">
+  <div class="cinema-banner">
+    <i class="fa-solid fa-shield-halved"></i>
+    <div>
+      <strong>Cinema Delivery Optimization Advisory:</strong> Proactive operational recommendations generated by model inference and KDM business rules to prevent showtime cancellations.
+    </div>
+  </div>
+
+  <div class="card" style="margin-bottom: 20px;">
+    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
+      <div style="display: flex; gap: 8px;">
+        <button class="btn btn-cyan btn-filter-opt active" data-filter="ALL">All Advisories (<span id="count-all-recs">0</span>)</button>
+        <button class="btn btn-outline btn-filter-opt" data-filter="CRITICAL">Critical Threats (<span id="count-crit-recs">0</span>)</button>
+        <button class="btn btn-outline btn-filter-opt" data-filter="WARNING">Operational Warnings (<span id="count-warn-recs">0</span>)</button>
+      </div>
+
+      <button class="btn btn-gold" id="btn-refresh-recs">
+        <i class="fa-solid fa-rotate-right"></i>
+        <span>Refresh Advisories</span>
+      </button>
+    </div>
+  </div>
+
+  <div id="recommendations-container" style="display: flex; flex-direction: column; gap: 14px;">
+    <div style="text-align: center; color: var(--text-dim); padding: 40px;">Evaluating operational delivery telemetry for actionable advisories...</div>
+  </div>
+</div>
+
+<!-- ============================================================== -->
+<!-- 9. DATASET MANAGEMENT & EXCEL UPLOAD TAB -->
+<!-- ============================================================== -->
+<div class="tab-pane" id="tab-dataset">
+  <div class="charts-grid-2">
+    <!-- Upload Card -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">
+          <i class="fa-solid fa-cloud-arrow-up"></i>
+          <span>Excel / CSV Dataset Ingest</span>
+        </div>
+        <span class="card-badge">.xlsx, .xls, .csv</span>
+      </div>
+
+      <div id="drop-zone" style="border: 2px dashed var(--border-accent); border-radius: 12px; padding: 36px 20px; text-align: center; background: rgba(0, 240, 255, 0.02); cursor: pointer; transition: all 0.2s ease;">
+        <i class="fa-solid fa-file-excel" style="font-size: 2.5rem; color: var(--accent-cyan); margin-bottom: 12px;"></i>
+        <div style="font-weight: 600; color: #fff; margin-bottom: 4px;">Drag &amp; Drop Cinema Delivery Dataset Here</div>
+        <div style="font-size: 0.78rem; color: var(--text-muted); margin-bottom: 16px;">Supports Microsoft Excel (.xlsx, .xls) and CSV files</div>
+        <input type="file" id="dataset-file-input" accept=".xlsx,.xls,.csv" style="display: none;">
+        <button type="button" class="btn btn-outline" onclick="document.getElementById('dataset-file-input').click()">Browse Files</button>
+      </div>
+
+      <div id="upload-status" style="margin-top: 14px; display: none;"></div>
+
+      <div style="display: flex; gap: 10px; margin-top: 20px;">
+        <a href="/api/dataset/sample/download" class="btn btn-outline" style="flex: 1; justify-content: center;">
+          <i class="fa-solid fa-download"></i>
+          <span>Download Sample Dataset</span>
+        </a>
+        <a href="/api/dataset/download_processed" class="btn btn-cyan" style="flex: 1; justify-content: center;">
+          <i class="fa-solid fa-file-export"></i>
+          <span>Export Cleaned Data</span>
+        </a>
+      </div>
+    </div>
+
+    <!-- Active Dataset Summary & Preprocessing Stats -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">
+          <i class="fa-solid fa-circle-check"></i>
+          <span>Active Dataset Information</span>
+        </div>
+        <span class="card-badge" id="dataset-status-badge">Loaded</span>
+      </div>
+
+      <div class="table-responsive">
+        <table class="table-custom">
+          <tbody>
+            <tr>
+              <td><strong>Filename:</strong></td>
+              <td id="meta-filename">sample_cinema_delivery.xlsx</td>
+            </tr>
+            <tr>
+              <td><strong>Total Records:</strong></td>
+              <td id="meta-records">--</td>
+            </tr>
+            <tr>
+              <td><strong>Dataset Nature:</strong></td>
+              <td><span class="badge badge-warning" id="meta-synthetic">Synthetic Demonstration</span></td>
+            </tr>
+            <tr>
+              <td><strong>Required Columns:</strong></td>
+              <td><span class="badge badge-normal">12 / 12 Validated</span></td>
+            </tr>
+            <tr>
+              <td><strong>Duplicates Removed:</strong></td>
+              <td id="meta-duplicates">0</td>
+            </tr>
+            <tr>
+              <td><strong>Missing Values Imputed:</strong></td>
+              <td id="meta-missing">0</td>
+            </tr>
+            <tr>
+              <td><strong>Active Screens:</strong></td>
+              <td id="meta-screens">--</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div style="margin-top: 16px; font-size: 0.78rem; color: var(--text-dim); line-height: 1.5;">
+        <em>Note: Uploading a new dataset immediately triggers automatic schema validation, missing value imputation, deduplication, and retrains all 4 ML modules.</em>
+      </div>
+    </div>
+  </div>
+
+  <!-- Dataset Preview Table -->
+  <div class="card" style="margin-top: 20px;">
+    <div class="card-header">
+      <div class="card-title">
+        <i class="fa-solid fa-table"></i>
+        <span>Dataset Records Explorer</span>
+      </div>
+      <div style="font-size: 0.78rem; color: var(--text-muted);" id="preview-count-label">Showing first 80 records</div>
+    </div>
+
+    <div class="table-responsive" style="max-height: 480px; overflow-y: auto;">
+      <table class="table-custom" id="dataset-preview-table">
+        <thead id="preview-thead"></thead>
+        <tbody id="preview-tbody">
+          <tr><td colspan="10" style="text-align: center;">Loading dataset preview...</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================== -->
+<!-- 10. REPORT GENERATION TAB -->
+<!-- ============================================================== -->
+<div class="tab-pane" id="tab-reports">
+  <div class="cinema-banner">
+    <i class="fa-solid fa-file-contract"></i>
+    <div>
+      <strong>Executive &amp; Technical Operational Reports:</strong> Generate comprehensive, presentation-grade reports containing executive KPI summaries, ML performance benchmarks, K-Means failure clusters, HMM transition matrices, and predictive action items.
+    </div>
+  </div>
+
+  <div class="charts-grid-2">
+    <div class="card" style="text-align: center; padding: 36px 24px;">
+      <i class="fa-solid fa-file-excel" style="font-size: 3.5rem; color: var(--status-normal); margin-bottom: 16px;"></i>
+      <h3 style="color: #fff; font-size: 1.25rem; margin-bottom: 8px;">Multi-Sheet Excel Operational Report</h3>
+      <p style="font-size: 0.84rem; color: var(--text-muted); margin-bottom: 24px; line-height: 1.6;">
+        Detailed spreadsheet with formatted sheets: Executive Summary, ML Benchmarks, K-Means Failure Clusters, HMM Sequence Dynamics, Predictive Action Items, and Full Raw Records.
+      </p>
+      <a href="/api/reports/download/excel" class="btn btn-cyan" style="font-size: 0.95rem; padding: 12px 28px; width: 80%; justify-content: center; margin: 0 auto;">
+        <i class="fa-solid fa-download"></i>
+        <span>Download Excel Report (.xlsx)</span>
+      </a>
+    </div>
+
+    <div class="card" style="text-align: center; padding: 36px 24px;">
+      <i class="fa-solid fa-file-pdf" style="font-size: 3.5rem; color: var(--status-critical); margin-bottom: 16px;"></i>
+      <h3 style="color: #fff; font-size: 1.25rem; margin-bottom: 8px;">Formal PDF Diagnostic Report</h3>
+      <p style="font-size: 0.84rem; color: var(--text-muted); margin-bottom: 24px; line-height: 1.6;">
+        Styled executive PDF report with cinema dark header, complete algorithmic evaluation tables, cluster signatures, HMM state transition matrix, and prioritized engineering mitigations.
+      </p>
+      <a href="/api/reports/download/pdf" class="btn btn-gold" style="font-size: 0.95rem; padding: 12px 28px; width: 80%; justify-content: center; margin: 0 auto;">
+        <i class="fa-solid fa-download"></i>
+        <span>Download PDF Report (.pdf)</span>
+      </a>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

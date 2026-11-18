@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}CinemaPredict - Predictive Optimization of Digital Cinema Delivery{% endblock %}</title>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <!-- Font Awesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <!-- Plotly.js -->
+  <script src="https://cdn.plot.ly/plotly-2.29.1.min.js"></script>
+
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+
+  <div class="app-container">
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar" id="sidebar">
+      <div class="brand-section">
+        <img src="{{ url_for('static', filename='img/logo.svg') }}" alt="CinemaPredict Logo" class="brand-logo">
+        <div>
+          <div class="brand-title">CinemaPredict</div>
+          <div class="brand-subtitle">AI Cinema Intelligence</div>
+        </div>
+      </div>
+
+      <ul class="nav-menu">
+        <li class="nav-category">Cinema Operations</li>
+        <li class="nav-item">
+          <a class="nav-link active" data-tab="dashboard">
+            <i class="fa-solid fa-chart-pie"></i>
+            <span>Overview Dashboard</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" data-tab="optimizer">
+            <i class="fa-solid fa-bolt"></i>
+            <span>Delivery Optimization</span>
+          </a>
+        </li>
+
+        <li class="nav-category">Machine Learning</li>
+        <li class="nav-item">
+          <a class="nav-link" data-tab="classification">
+            <i class="fa-solid fa-shield-halved"></i>
+            <span>Risk Classification</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" data-tab="ensemble">
+            <i class="fa-solid fa-layer-group"></i>
+            <span>Ensemble Learning</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" data-tab="regression">
+            <i class="fa-solid fa-clock-rotate-left"></i>
+            <span>Recovery Regression</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" data-tab="clustering">
+            <i class="fa-solid fa-circle-nodes"></i>
+            <span>Failure Clustering</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" data-tab="hmm">
+            <i class="fa-solid fa-wave-square"></i>
+            <span>Sequential HMM</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" data-tab="comparison">
+            <i class="fa-solid fa-scale-balanced"></i>
+            <span>Research Comparison</span>
+          </a>
+        </li>
+
+        <li class="nav-category">Data & Reporting</li>
+        <li class="nav-item">
+          <a class="nav-link" data-tab="dataset">
+            <i class="fa-solid fa-file-excel"></i>
+            <span>Dataset & Ingest</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" data-tab="reports">
+            <i class="fa-solid fa-file-pdf"></i>
+            <span>Report Exports</span>
+          </a>
+        </li>
+      </ul>
+
+      <div class="sidebar-footer">
+        <div class="dataset-pill">
+          <span class="pulse-dot"></span>
+          <div style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+            <div style="font-weight: 600; color: #f1f5f9;" id="sidebar-dataset-name">Active: Synthetic Sample</div>
+            <div style="color: #64748b; font-size: 0.68rem;" id="sidebar-dataset-screens">20 Screens &bull; 520 Deliveries</div>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Wrapper -->
+    <div class="main-wrapper">
+      <!-- Topbar -->
+      <header class="topbar">
+        <div class="page-info">
+          <h1 id="page-title">Overview Dashboard</h1>
+          <p id="page-subtitle">Real-time digital cinema content delivery monitoring & key performance indicators</p>
+        </div>
+
+        <div class="topbar-actions">
+          <a href="/api/dataset/sample/download" class="btn btn-outline" title="Download Standard Synthetic Sample">
+            <i class="fa-solid fa-download"></i>
+            <span>Sample Excel</span>
+          </a>
+          <button class="btn btn-gold" id="btn-quick-report" title="Generate Instant Executive Report">
+            <i class="fa-solid fa-file-export"></i>
+            <span>Export Report</span>
+          </button>
+        </div>
+      </header>
+
+      <!-- Content Body -->
+      <main class="content-body">
+        {% block content %}{% endblock %}
+      </main>
+    </div>
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div id="toast-container" style="position: fixed; bottom: 24px; right: 24px; z-index: 9999; display: flex; flex-direction: column; gap: 10px;"></div>
+
+  <!-- Main JavaScript Scripts -->
+  <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/classification.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/ensemble.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/regression.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/clustering.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/hmm.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/comparison.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/optimizer.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/dataset.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/reports.js') }}"></script>
+</body>
+</html>
